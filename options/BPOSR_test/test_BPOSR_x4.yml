@@ -1,0 +1,58 @@
+name: BPOSR_x4
+model_type: SRModel
+scale: 4
+num_gpu: 1  # set num_gpu: 0 for cpu mode
+manual_seed: 42
+
+datasets:
+  test_1:  # the 1st test dataset
+    name: odisr_test
+    type: PairedImageDataset
+    dataroot_gt: ./Dataset/lau_dataset_clean/odisr/testing/HR
+    dataroot_lq: ./Dataset/lau_dataset_clean/odisr/testing/LR/X4
+    io_backend:
+      type: disk
+  test_2:  # the 2nd test dataset
+    name: sun
+    type: PairedImageDataset
+    dataroot_gt: ./Dataset/lau_dataset_clean/sun_test/HR
+    dataroot_lq: ./Dataset/lau_dataset_clean/sun_test/LR/X4
+    io_backend:
+      type: disk
+
+# network structures
+network_g:
+  type: BPOSR
+  upscale: 4
+  in_chans: 3
+  img_size: [256,512]
+  cmp_window_size: [8,8]
+  erp_window_size: [4,16]
+  roll_r: 3
+  img_range: 1.
+  depths: [6,6,6,6]
+  embed_dim: 60
+  num_heads: [6,6,6,6]
+  mlp_ratio: 2
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+
+
+# path
+path:
+  pretrain_network_g: experiments/x4_net_g_latest.pth
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr_ws: # metric name, can be arbitrary
+      type: calculate_psnr_ws
+      crop_border: 4
+      test_y_channel: true
+
+    ssim_ws: # metric name, can be arbitrary
+      type: calculate_ssim_ws
+      crop_border: 4
+      test_y_channel: true
+
