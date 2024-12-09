@@ -42,6 +42,7 @@ Download the LAU dataset from [this link](https://drive.google.com/drive/folders
 To extract the data, run:
 
 ```bash
+cd Dataset
 unrar x lau_dataset.rar
 ```
 
